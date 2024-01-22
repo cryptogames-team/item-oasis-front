@@ -26,7 +26,7 @@ export default function Header() {
   const handleLogout = () => {
     console.log("handleLogout 호출");
     localStorage.setItem("access_token", "");
-    const url = "http://221.148.25.234:1207/user";
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/user`;
     h_get_by_token(url)
     .then(res => {
       setIsLogin(true);
@@ -43,10 +43,12 @@ export default function Header() {
       const nameValue = ref_user_name.current.value; // 계정 이름
       const keyValue = ref_user_key.current.value; // 공개 키
 
-      const url = "http://221.148.25.234:1207/user";
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/user`;
       h_postJson(url, {user_name : nameValue})
       .then(res => {
           localStorage.setItem("access_token", res.accessToken);
+          localStorage.setItem("user_name", res.user.user_name);
+          localStorage.setItem("user_id", res.user.user_id);
           console.log("로그인 데이터", res.accessToken);
           setIsLogin(true);
         }

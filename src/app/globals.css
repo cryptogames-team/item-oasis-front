@@ -39,3 +39,12 @@
       padding: 0 15px; /* 모바일에서의 좌우 패딩을 조정합니다 */
     }
   }
+
+
+  .chat_container {
+    width: 760px;
+  }
+
+  .chat_list_container {
+    width: 252px;
+  }

@@ -1,8 +1,8 @@
-import RegistComponent from "@/app/_component/item/regist";
+import RegistComponent from "@/app/_component/item/BoardRegist";
 import Header from "@/app/_component/universal/Header";
 
 
-export default function RegistSell() {
+export default function Regist() {
   return (
     <>
         <Header />

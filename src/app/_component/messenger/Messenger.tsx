@@ -31,7 +31,7 @@ export default function MessengerComponent() {
     socket.on("connect", () => {
       console.log("소켓 연결@@@@@@@", socket.id); // x8WIv7-mJelg7on_ALbx
 
-      socket.emit("set_user_id", localStorage.getItem("user_id"));
+      socket.emit("set_user_id", "2");
       socket.emit("join", "1");    
 
     });
@@ -64,7 +64,7 @@ export default function MessengerComponent() {
     socket.emit("chatMessage", {
       chatDTO :{
       chat_type : 0,
-      user_id : localStorage.getItem("user_id"),
+      user_id : 1,
       chat_room : "1",
       chat_content : chatInput,
       chat_date : "test"

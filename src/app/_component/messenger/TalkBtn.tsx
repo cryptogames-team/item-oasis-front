@@ -4,7 +4,7 @@ export default function Talk() {
 
   const handleClickTalk = () => {
     console.log("handleClickTalk 호출");
-    window.open("http://localhost:3000/messenger", "_black", "width=820, height=630");
+    window.open(`${process.env.NEXT_PUBLIC_CHAT_URL}/messenger`, "_black", "width=820, height=630");
   
   }
 

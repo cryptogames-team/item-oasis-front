@@ -85,12 +85,11 @@ export default function BoardDetail(props: ChildProps) {
       
     const data = {
       seller: boardInfo?.user_id.user_name.toString(),
-      buyer: localStorage.getItem("user_name"),
       transaction_board_id: boardInfo?.transaction_board_id,
       price: hep_price,
       game_id: boardInfo?.game_id.game_id,
       item_count: buyCount,
-      game_server: boardInfo?.game_server_id.game_server_id,
+      game_server_id: boardInfo?.game_server_id.game_server_id,
       item_type: boardInfo?.transaction_board_type,
     };
 

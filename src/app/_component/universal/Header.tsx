@@ -4,8 +4,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { h_get_by_token } from "@/js/fetch_by_token";
+import { useSelector, useDispatch } from "react-redux";
+import {RootState} from '@/redux/reducer';
+import { jwtDecode } from "jwt-decode";
 
 export default function Header() {
+
+  const dispatch = useDispatch();
+  const loginState : any = useSelector((state : RootState) => state.loginReducer);
+  const is_current_login = loginState.is_current_login;
+  
 
   const [isLogin, setIsLogin] = useState(false);
 
@@ -47,6 +55,7 @@ export default function Header() {
       h_postJson(url, {user_name : nameValue})
       .then(res => {
           localStorage.setItem("access_token", res.accessToken);
+          localStorage.setItem("refresh_token", res.refreshToken);
           localStorage.setItem("user_name", res.user.user_name);
           localStorage.setItem("user_id", res.user.user_id);
           console.log("로그인 데이터", res.accessToken);
@@ -57,17 +66,64 @@ export default function Header() {
   }
 
   // useEffect(() => {
-  //   const url = "http://221.148.25.234:1207/user";
-  //   h_get_by_token(url)
-  //   .then(res => {
-  //     setIsLogin(true);
-  //   }
-  //   )
-  //   .catch(err => {
-  //     setIsLogin(false);
-  //   })
 
+  //   // 1. 로컬 스토리지에 있는 access_token을 가져와서 해당 access_token이 유효한지 확인한다.
+  //   // 2. 유효하지 않다면 refresh_token을 통해 access_token을 발급해준다. 만약 refresh_token도 유효하지 않다면 로그아웃 상태로 유지해준다.
+
+  //   // access_token 또는 refresh_token 이 없다면 당연히 로그아웃 상태
+  //   const access_token = localStorage.getItem("access_token");
+  //   const refresh_token = localStorage.getItem("refresh_token");
+  //   if(!access_token || !refresh_token){
+  //     return;       
+  //   }
+
+  //   // access_token이 유효한지 확인. 
+  //   // 유효하면 로그인 처리, 유효하지 않다면 refresh_token을 통해 재발급
+  //   // if(){
+
+  //   // }
+
+  //   const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/user/refreshToken`;
+  //   h_postJson(url, {refToken : refresh_token})
+  //     .then((res : any) => {
+  //         localStorage.setItem("access_token", res.accessToken);
+  //         const decodedToken : any = jwtDecode(res.accessToken);
+  //         const user_name : string = decodedToken.user_name;
+  //         console.log(`decodedToken, user_name : `, decodedToken, user_name);
+
+  //         const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/user`;
+  //         h_postJson(url, {user_name : user_name})
+  //         .then(res => {
+  //             // localStorage.setItem("access_token", res.accessToken);
+  //             // localStorage.setItem("user_name", res.user.user_name);
+  //             // localStorage.setItem("user_id", res.user.user_id);
+  //             console.log("로그인 데이터", res.accessToken);
+  //           }
+  //         )
+  //       }
+  //     );
+
+
+
+  //   // refresh token이 유효하지 않다면 로그인 처리 x
+
+
+  //   //
+     
   // }, []);
+
+  // useEffect(() => {
+
+  //   // 로그인 처리
+  //   console.log(`! is_current_login을 통한 로그인 처리`, is_current_login);
+  //   if(is_current_login) {
+  //     setIsLogin(true);
+  //   } else {
+  //     setIsLogin(false);
+  //   }
+  
+  // }, [is_current_login]);
+
 
 
   return (

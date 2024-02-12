@@ -11,7 +11,6 @@ export default function MyPageHeader() {
             <div className="py-3 px-5 bg-gray-100 text-sm">
               <ul>
                 <li className="pb-1">판매 등록한 물품</li>
-                <li className="pb-1">결제대기 중 물품</li>
                 <li className="pb-1">판매진행 중 물품</li>
                 <li className="pb-1">판매완료 된 물품</li>
               </ul>
@@ -20,7 +19,6 @@ export default function MyPageHeader() {
             <div className="py-3 px-5 bg-gray-100 text-sm">
               <ul>
                 <li className="pb-1">구매 등록한 물품</li>
-                <li className="pb-1">결제해야 할 물품</li>
                 <li className="pb-1">구매진행 중 물품</li>
                 <li className="pb-1">구매완료 된 물품</li>
               </ul>

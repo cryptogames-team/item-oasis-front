@@ -5,4 +5,5 @@ export type SocketChatItem = {
   chat_room: string;
   chat_type: number;
   user_id: string;
+  is_read: number;
 };

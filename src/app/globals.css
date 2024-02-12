@@ -4,16 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Roboto:wght@400;700&display=swap');
 
 :root {
-  
-}
-
-
-.font-oswald {
-    font-family: 'Oswald', sans-serif;
-}
-
-.font-roboto {
-    font-family: 'Roboto', sans-serif;
+    
 }
 
 
@@ -23,7 +14,17 @@
     margin-left: auto;
     margin-right: auto;
     padding : 5px;
+    font-family: "skybori";
   }
+
+.h-container2 {
+  font-family: "skybori";
+  width: 100%; 
+  max-width: 1050px; 
+  margin-left: auto;
+  margin-right: auto;
+}
+
   
   /* 태블릿 크기에 대한 스타일 */
   @media (max-width: 768px) {
@@ -43,8 +44,18 @@
 
   .chat_container {
     width: 760px;
+    font-family: "skybori";
   }
 
   .chat_list_container {
     width: 252px;
+  }
+
+  @font-face {
+    font-family: "skybori";
+    src : url("../fonts/SKYBORI.ttf");
+  }
+
+  .font-skybori {
+    font-family: "skybori";
   }

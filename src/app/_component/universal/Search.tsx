@@ -66,12 +66,12 @@ export default function Search() {
     console.log("handleGameSearch 호출 1", e.target.value);
     console.log("handleGameSearch 호출 2", e.target);
 
+    setGameSearch(e.target.value)
+
     if(e.target.value === "") {
       return;
     }
 
-
-    setGameSearch(e.target.value)
 
     const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/search/${e.target.value}`;
     h_get(url).then((res) => {
@@ -122,7 +122,7 @@ export default function Search() {
 
   return (
     <>
-      <div className="w-full border-b-2">
+      <div className="w-full">
         <div className="h-container mt-5 flex items-center">
           <Image
             src="/아이템오아시스로고.png"
@@ -147,6 +147,7 @@ export default function Search() {
                 onChange={handleGameSearch}
                 onFocus={() => setIsSearchFocus(true)}
                 value={gameSearch}
+                placeholder="게임명과 서버명을 검색해보세요."
                 ref={searchInput}
               ></input>
               <IoIosSearch className="text-indigo-400 mr-3" size={23} />
@@ -224,13 +225,13 @@ export default function Search() {
           <Link 
             href="/item/board/?transaction_board_game=1&transaction_board_server=1"
             className="ml-10 text-lg text-bold">
-            자유 게시판
+            테스트
           </Link>
           <Link href="/my/sell" className="ml-10 text-lg text-bold">
             마이 페이지
           </Link>
           <Link href="/messenger" className="ml-10 text-lg text-bold">
-            채팅 테스트 링크
+            거래 채팅
           </Link>
         </div>
       </div>

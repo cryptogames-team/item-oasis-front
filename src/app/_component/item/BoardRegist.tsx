@@ -127,19 +127,21 @@ export default function RegistComponent() {
 
   const handleGameSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log("handleGameSearch 호출", e.target.value);
-    setGameSearch(e.target.value);
 
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL_2}/game_ac/_search`;
-    const data = {
-      query: {
-        match: {
-          name_ngram: e.target.value,
-        },
-      },
-    };
-    h_postJson(url, data).then((res) => {
+    setGameSearch(e.target.value);
+    
+    if(e.target.value === "") {
+      return;
+    }
+
+    
+
+
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/search/${e.target.value}`;
+    
+    h_get(url).then((res => {
       let arrayItem = Array();
-      res.hits.hits.map((item: any) => {
+      res.map((item: any) => {
         arrayItem.push({
           id: item._id,
           name: item._source.name,
@@ -148,7 +150,8 @@ export default function RegistComponent() {
 
       console.log("검색 값 및 최종 배열 : ", arrayItem);
       setElaGameResult(arrayItem);
-    });
+
+    }));
   };
 
   // 글 제목 관련 핸들러
@@ -268,7 +271,7 @@ export default function RegistComponent() {
   };
 
   const handleClickGame = (gameName: GameName) => {
-    console.log("handleClickGame 호출");
+    console.log("handleClickGame 호출", gameName);
     const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/game/game-server/${gameName.id}`;
 
     setSelectGame(gameName); // 선택한 게임 저장

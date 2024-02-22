@@ -52,9 +52,9 @@ interface ChatProps {
     setChatPage : Dispatch<SetStateAction<number>>;
 }
 
-interface ImageLoad {
-  chat_id : number;
-  isLoad : boolean;
+interface ImageLoadProps {
+  item : SocketChatItem;
+  handleImgLoad : (loadedChat : SocketChatItem) => void;
 }
 
 export default function MessengerList() {
@@ -403,21 +403,18 @@ function ChatListItem({chatList, setChatPage, setSelectChat}: ChatListItemProps)
           .then((responses) => {
             console.log("이미지 urls", responses);
 
-            const chatMessages = responses.map((res) => ({
+            const chatMessage = {
               chatDTO: {
                 chat_type: 1,
                 user_id: localStorage.getItem("user_id"),
                 chat_room: selectChat?.transaction_id.toString(),
-                chat_content: res,
+                chat_content: JSON.stringify(responses),
               },
               recieverId: selectChat?.user.user_id,
-            }));
+            };
 
-            console.log("chatMessages: ", chatMessages);
-
-            chatMessages.forEach((chatMsg) => {
-              socket && socket.emit("chatMessage", chatMsg);
-            });
+            console.log("새로운 chatMessages: ", chatMessage);
+            socket && socket.emit("chatMessage", chatMessage);
             
           })
           .catch((error) => {
@@ -570,12 +567,8 @@ function ChatListItem({chatList, setChatPage, setSelectChat}: ChatListItemProps)
                             src={`/loading.gif`}
                           >
                           </img>
-                          <img
-                            id={`"img_"${item.chat_id}`}
-                            className={`w-28 ${item.isLoad !== false ? "" : "hidden"} `}
-                            src={`${item.chat_content}`}
-                            onLoad={() => handleImgLoad(item)}
-                          ></img>
+                          <GridImage item={item} handleImgLoad={handleImgLoad}></GridImage>
+                        
                         </>
                         
                       ) : 
@@ -626,4 +619,67 @@ function ChatListItem({chatList, setChatPage, setSelectChat}: ChatListItemProps)
         </div>
       </div>
     );
+  }
+
+  function GridImage({item, handleImgLoad} :ImageLoadProps) {
+
+
+    const [gridLayout, setGridLayout] = useState<string[][]>([]);
+
+  useEffect(() => {
+    // 이미지를 그리드 레이아웃에 배치
+    const imageUrls = JSON.parse(item.chat_content);
+    const numImages = imageUrls.length;
+    const numColumns = Math.min(numImages, 3); // 최대 3개 열로 제한
+
+    const numRows = Math.ceil(numImages / numColumns);
+    const gridLayoutArray = [];
+
+    let imageIndex = 0;
+    for (let i = 0; i < numRows; i++) {
+      const rowArray = [];
+
+      for (let j = 0; j < numColumns; j++) {
+        if (imageIndex < numImages) {
+          const imageSrc = imageUrls[imageIndex];
+          rowArray.push(imageSrc);
+          imageIndex++;
+        }
+      }
+
+      gridLayoutArray.push(rowArray);
+    }
+
+    setGridLayout(gridLayoutArray);
+  }, [item.chat_content]);
+
+    
+
+    return (
+      // <img
+      //   id={`"img_"${item.chat_id}`}
+      //   className={`w-28 ${item.isLoad !== false ? "" : "hidden"} `}
+      //   src={`
+      //   ${
+      //     JSON.parse(item.chat_content).map(((img : string) => img))
+      //   }`}
+      //   onLoad={() => handleImgLoad(item)}
+      //   ></img>
+      <div className="w-28 grid gap-4">
+        {gridLayout.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex">
+            {row.map((imageSrc, columnIndex) => (
+              <img
+                key={columnIndex}
+                src={imageSrc}
+                className="w-full"
+                alt={`Image ${rowIndex * 3 + columnIndex + 1}`}
+                onLoad={() => handleImgLoad(item)}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+    
   }

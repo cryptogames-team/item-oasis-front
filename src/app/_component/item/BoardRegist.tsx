@@ -59,8 +59,8 @@ const buttonGameServerNameStyles = {
 export default function RegistComponent() {
 
   const [boardType, setBoardType] = useState(0); // 게시글 종류 (0: 팝니다, 1 : 삽니다)
-  const [gameName, setGameName] = useState<number>(0); // 게임 이름
-  const [gameServer, setGameServer] = useState<number>(0); // 게임 서버
+  const [gameName, setGameName] = useState<number>(1); // 게임 이름
+  const [gameServer, setGameServer] = useState<number>(1); // 게임 서버
   const [itemType, setItemType] = useState<number>(ITEM_TYPE.GameMoney); // 게임 아이템 종류 (1 : 게임머니, 2 : 아이템, 3 : 계정, 4 : 기타)
   const [amount, setAmount] = useState<number>(0); // 판매할 개수
 
@@ -224,22 +224,24 @@ export default function RegistComponent() {
   // 물품 등록시 발생하는 이벤트
   const handleEnroll = () => {
     console.log("handleEnroll 호출");
+
+
     const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/transaction-board`;
     const formData = new FormData();
 
-    console.log("formData : ", {
-      title: title,
-      gameName: "test",
-      gameServer: "testServer",
-      itemType: itemType.toString(),
-      amount: amount.toString(),
-      boardType: boardType.toString(),
-      saleType: saleType.toString(),
-      minAmount: minAmount.toString(),
-      price: price.toString(),
-      detail: detail.toString(),
-      characterName: characterName.toString(),
-    });
+    // console.log("formData : ", {
+    //   title: title,
+    //   gameName: "test",
+    //   gameServer: "testServer",
+    //   itemType: itemType.toString(),
+    //   amount: amount.toString(),
+    //   boardType: boardType.toString(),
+    //   saleType: saleType.toString(),
+    //   minAmount: minAmount.toString(),
+    //   price: price.toString(),
+    //   detail: detail.toString(),
+    //   characterName: characterName.toString(),
+    // });
 
     formData.append("transaction_board_title", title);
     formData.append("game_id", gameName?.toString());

@@ -6,9 +6,11 @@ import {RootState} from '@/redux/reducer';
 
 import io from 'socket.io-client';
 import { TbMessageDots } from "react-icons/tb";
+import { IoClose } from "react-icons/io5";
 import { SocketChatItem } from "@/types/socket/server_chat";
 import Link from "next/link";
-import { useRouter, usePathname } from 'next/navigation';;
+import { useRouter, usePathname } from 'next/navigation';import MessengerList from "./MessengerList";
+;
 
 
 export default function Talk() {
@@ -66,7 +68,7 @@ export default function Talk() {
       console.log("알림 채팅 호출", data);
         dispatch({
           type: 'RECEIVE_NOTICE',
-          payload: data,
+          payload: {...data, isLoad : false},
         })      
     
     });
@@ -103,21 +105,31 @@ export default function Talk() {
 
   return (
     <>
-      {pathName !== "/messenger" && (
-        <Link href={"/messenger"}>
-          <button className="shadow-md fixed rounded-full bg-indigo-400 bottom-10 right-40 h-24 w-24 text-white">
-            <div className="flex flex-col items-center justify-center relative">
-              {noticeRead === false && (
-                <div className="absolute -top-4 right-0 rounded-full w-6 h-6 bg-red-400 font-bold text-center">
-                  {" "}
-                  N
-                </div>
-              )}
-              <TbMessageDots size={45} />
-              <div className="mt-1 font-bold">거래톡</div>
-            </div>
-          </button>
-        </Link>
+      {pathName !== "/messenger" && <Link href={"/messenger"}></Link>}
+      {active === false ? (
+        <button
+          className="shadow-md fixed rounded-full bg-indigo-400 bottom-10 right-[10px] h-20 w-20 text-white"
+          onClick={() => {setActive(true); setNoticeRead(true);}}
+        >
+          <div className="flex flex-col items-center justify-center relative">
+            {noticeRead === false && (
+              <div className="absolute -top-4 right-0 rounded-full w-6 h-6 bg-red-400 font-bold text-center">
+                {" "}
+                N
+              </div>
+            )}
+            <TbMessageDots size={45} />
+          </div>
+        </button>
+      ) : (
+        <button
+          className="shadow-md fixed rounded-full bg-indigo-400 bottom-10 right-[10px] h-20 w-20"
+        >
+          <div className="flex flex-col items-center justify-center relativ z-10">
+            <MessengerList />
+            <IoClose size={45} className="text-white font-bold" onClick={() => setActive(false)}/>
+          </div>
+        </button>
       )}
     </>
   );

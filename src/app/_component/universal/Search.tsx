@@ -10,6 +10,9 @@ import { h_get, h_postJson } from "@/js/fetch";
 import { useRouter } from "next/navigation";
 import { GameName, GameServerName } from "@/types/game_info";
 
+import { useSelector, useDispatch } from "react-redux";
+import {RootState} from '@/redux/reducer';
+
 
 const buttonGameNameStyles = {
   normal: "pl-4 pr-6 py-2 hover:bg-indigo-50 hover:text-indigo-600", // 기본 스타일
@@ -22,6 +25,12 @@ const buttonGameServerNameStyles = {
 };
 
 export default function Search() {
+  const loginState : any = useSelector((state : RootState) => state.loginReducer);
+  const is_current_login = loginState.is_current_login;
+
+  const [isLogin, setIsLogin] = useState(false);
+
+
   const [gameSearch, setGameSearch] = useState(""); // 게임 검색어
   const [isSearchFocus, setIsSearchFocus] = useState<boolean>(false); // 게임 검색창 활성화 여부
   const [elaGameResult, setElaGameResult] = useState<GameName[]>([]);
@@ -50,6 +59,14 @@ export default function Search() {
     setElaGameServerResult([])
   }, [gameSearch]);
 
+  useEffect(() => {
+    if(is_current_login === true){
+      setIsLogin(true);
+    } else if(is_current_login === false) {
+      setIsLogin(false);
+    }   
+  }, [is_current_login]);
+
   const handleClickWrap = (e: MouseEvent) => {
     if (e.target instanceof Node) {
       if (
@@ -74,6 +91,7 @@ export default function Search() {
 
 
     const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/search/${e.target.value}`;
+    console.log("handleGameSearch 호출 3", url);
     h_get(url).then((res) => {
       let arrayItem = Array();
       res.map((item: any) => {
@@ -119,6 +137,16 @@ export default function Search() {
 
     router.push(`/item/board?transaction_board_game=${item.gameInfo.id}&transaction_board_server=${item.game_server_id}`);
   };
+
+  const handleIsLogin = (path : string) => {
+    console.log("handleIsLogin 호출");
+
+    if(isLogin === true) {
+      router.push(`${path}`)
+    } else {
+      alert("로그인을 먼저 진행해주세요!")
+    }  
+  }
 
   return (
     <>
@@ -202,13 +230,12 @@ export default function Search() {
           </div>
 
           <div className="ml-10 flex text-white font-bold">
-            <Link href="/item/regist">
-              <button className="py-3 px-5 rounded-xl bg-indigo-400">
-                판매 등록
-              </button>
-            </Link>
+            
+            <button className="py-3 px-5 rounded-xl bg-indigo-400" onClick={() =>handleIsLogin("/item/regist")}>
+              판매 등록
+            </button>
 
-            <button className="mx-3 py-3 px-5 rounded-xl bg-indigo-400">
+            <button className="ml-3 py-3 px-5 rounded-xl bg-indigo-400" onClick={() =>handleIsLogin("/item/regist")}>
               구매 등록
             </button>
           </div>
@@ -227,9 +254,9 @@ export default function Search() {
             className="ml-10 text-lg text-bold">
             테스트
           </Link>
-          <Link href="/my/sell" className="ml-10 text-lg text-bold">
+          <button className="ml-10 text-lg text-bold" onClick={() =>handleIsLogin("/my/sell")}>
             마이 페이지
-          </Link>
+          </button>
           <Link href="/messenger" className="ml-10 text-lg text-bold">
             거래 채팅
           </Link>

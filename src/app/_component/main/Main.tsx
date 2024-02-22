@@ -1,5 +1,8 @@
 "use client";
+import { h_get } from "@/js/fetch";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import {BoardItem} from "@/types/board_type"
 
 
 const TradeType = {
@@ -7,7 +10,30 @@ const TradeType = {
   trade_complete: 2,
 };
 
+type BoardItemInfo = {
+  totalCount : number;
+  boardList : BoardItem[];
+}
+
 export default function Main() {
+
+  const [boardInfo, setBoardInfo] = useState<BoardItemInfo | undefined>();
+  
+
+  useEffect(() => {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/transaction-board/all`;
+    const queryUrl = `?page=1&limit=4&filter=2&transaction_completed=0`;
+    h_get(url+queryUrl)
+    .then(res => {
+      const mappedData:BoardItemInfo = {
+        totalCount : res.count,
+        boardList : res.board
+      }
+      console.log("mapped 데이터 ", mappedData);
+      setBoardInfo(mappedData);
+    });
+  
+  }, []);
  
 
 
@@ -22,7 +48,7 @@ export default function Main() {
             </div>
 
             <div className="w-2/6 flex flex-col">
-              <div className="flex flex-col items-center shadow p-4 rounded-md">
+              <div className="flex flex-col items-center basic_shadow1 basic_shadow2 p-4 rounded-md">
                 <div className="text-xl font-bold">블록체인 기반 아이템 안전거래 플랫폼</div>
                 <div className="mt-2 text-xl font-bold">아이템 오아시스</div>
                 <button className="mt-10 bg-indigo-400 text-white p-4 rounded-lg font-bold">아이템 오아시스 로그인</button>
@@ -64,13 +90,36 @@ export default function Main() {
 
           <div className="mt-20">
             <div className="font-bold text-2xl">최근 거래글</div>
-            <div>
-              
+            
+            <div className="mt-7 basic_shadow1 basic_shadow2 rounded-lg w-full p-5">
+              <div className="text-xl underline underline-offset-8">실시간 최저가 물품이에요!</div>
+                <div className="mt-5 flex flex-col items-center">              
+                  {
+                      boardInfo?.boardList.map(item => {
+                        return (
+                          <div key={item.transaction_board_id} className="mt-4 w-full flex items-center">
+                            <div className="border-2 px-7 py-2 text-lg rounded-md text-bold recent_color">
+                              {
+                                item.transaction_board_item_type === 0 ? "게임머니" :
+                                item.transaction_board_item_type === 1 ? "아이템" :
+                                item.transaction_board_item_type === 2 ? "계정" :
+                                item.transaction_board_item_type === 3 ? "기타" : "타입오류"
+                              }
+                            </div>
+                            <div className="pl-10 flex-1">{item.transaction_board_title}</div>
+                            <div className="flex flex-col items-end">
+                              <div className="text-sm">{`${item.game_id.game_name} > ${item.game_server_id.game_server_name}`}</div>
+                              <div className="mt-1 text-indigo-400 text-bold">거래가격 {item.transaction_board_item_price} HEP</div>
+                            </div>
+                          </div>
+                        )
+                      })
+                    }
+                </div>
             </div>
 
-          </div>
-
         </div>
+      </div>
       </div>
     </>
   );

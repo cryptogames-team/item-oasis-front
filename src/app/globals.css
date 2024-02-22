@@ -15,6 +15,7 @@
     margin-right: auto;
     padding : 5px;
     font-family: "skybori";
+    min-height: '100vh'
   }
 
 .h-container2 {
@@ -59,3 +60,32 @@
   .font-skybori {
     font-family: "skybori";
   }
+
+  .chat_shadow1 {
+    box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
+    font-family: "skybori";
+  }
+
+  .chat_shadow2 {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .basic_shadow1 {
+    box-shadow: 0 -2px 7px rgba(0, 0, 0, 0.1);
+  }
+
+  .basic_shadow2 {
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .recent_color {
+    color:  #b9a368;
+    border-color: #b9a368;
+  }
+
+
+
+ .h-slick li {
+  width: 70px !important;
+  height: 5px !important;
+ }

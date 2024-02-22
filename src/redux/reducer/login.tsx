@@ -22,11 +22,11 @@ const loginReducer = (state = initialState, action : Action) => {
     switch (action.type) {
       case ActionType.LOG_IN:
         console.log("LOG_IN dispatch..", action.payload)
-        return { ...state, socket: action.payload };
+        return { ...action.payload };
       
       case ActionType.LOG_OUT :
         console.log("LOG_OUT dispatch.. msg : ", action.payload);
-        return { ...state, msg: action.payload };
+        return { ...action.payload };
       
       default:
         return state;

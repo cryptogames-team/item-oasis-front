@@ -11,6 +11,7 @@ export type BoardItem = {
     transaction_board_date: string;
     transaction_board_id: number;
     transaction_board_item_price: number;
+    transaction_board_item_type : number;
     transaction_board_min_amount: number;
     transaction_board_sale_type: number;
     transaction_board_title: string;

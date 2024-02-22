@@ -3,10 +3,9 @@ import {h_postJson} from "@/js/fetch"
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { h_get_by_token } from "@/js/fetch_by_token";
+import { h_get_by_token, h_postJsonText_by_token, h_postJson_by_token } from "@/js/fetch_by_token";
 import { useSelector, useDispatch } from "react-redux";
 import {RootState} from '@/redux/reducer';
-import { jwtDecode } from "jwt-decode";
 
 export default function Header() {
 
@@ -31,18 +30,39 @@ export default function Header() {
     }
   }
 
-  const handleLogout = () => {
-    console.log("handleLogout 호출");
-    localStorage.setItem("access_token", "");
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/user`;
-    h_get_by_token(url)
-    .then(res => {
+  useEffect(() => {
+    if(is_current_login === true){
       setIsLogin(true);
-    }
-    )
-    .catch(err => {
+    } else if(is_current_login === false) {
       setIsLogin(false);
-    })
+    }   
+  }, [is_current_login]);
+
+  const handleLogout = async () => {
+    console.log("handleLogout 호출");
+
+    try {
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/user/logout`;
+      const logoutRes = await h_postJsonText_by_token(url);
+      localStorage.setItem("access_token", "");
+
+      console.log(`로그아웃 성공`, logoutRes);    
+
+      dispatch({
+        type: "LOG_OUT",
+        payload: {
+          access_token: null,
+          refresh_token: null,
+          is_current_login: false,
+          user_id: null,
+          user_name: null,
+        },
+      });
+      
+    } catch (error) {
+      console.log(`로그아웃 실패`, error);      
+    }
+    
   }
 
   const handleLoginComplete = () => {
@@ -59,58 +79,104 @@ export default function Header() {
           localStorage.setItem("user_name", res.user.user_name);
           localStorage.setItem("user_id", res.user.user_id);
           console.log("로그인 데이터", res.accessToken);
-          setIsLogin(true);
+
+          dispatch({
+            type : "LOG_IN",
+            payload : {
+              access_token: res.accessToken,
+              refresh_token : res.refreshToken,
+              is_current_login : true,
+              user_id : res.user.user_name,
+              user_name : res.user.user_name
+            }
+          });
         }
       );
     }
   }
 
-  // useEffect(() => {
 
-  //   // 1. 로컬 스토리지에 있는 access_token을 가져와서 해당 access_token이 유효한지 확인한다.
-  //   // 2. 유효하지 않다면 refresh_token을 통해 access_token을 발급해준다. 만약 refresh_token도 유효하지 않다면 로그아웃 상태로 유지해준다.
+  useEffect(() => {
 
-  //   // access_token 또는 refresh_token 이 없다면 당연히 로그아웃 상태
-  //   const access_token = localStorage.getItem("access_token");
-  //   const refresh_token = localStorage.getItem("refresh_token");
-  //   if(!access_token || !refresh_token){
-  //     return;       
-  //   }
-
-  //   // access_token이 유효한지 확인. 
-  //   // 유효하면 로그인 처리, 유효하지 않다면 refresh_token을 통해 재발급
-  //   // if(){
-
-  //   // }
-
-  //   const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/user/refreshToken`;
-  //   h_postJson(url, {refToken : refresh_token})
-  //     .then((res : any) => {
-  //         localStorage.setItem("access_token", res.accessToken);
-  //         const decodedToken : any = jwtDecode(res.accessToken);
-  //         const user_name : string = decodedToken.user_name;
-  //         console.log(`decodedToken, user_name : `, decodedToken, user_name);
-
-  //         const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/user`;
-  //         h_postJson(url, {user_name : user_name})
-  //         .then(res => {
-  //             // localStorage.setItem("access_token", res.accessToken);
-  //             // localStorage.setItem("user_name", res.user.user_name);
-  //             // localStorage.setItem("user_id", res.user.user_id);
-  //             console.log("로그인 데이터", res.accessToken);
-  //           }
-  //         )
-  //       }
-  //     );
-
-
-
-  //   // refresh token이 유효하지 않다면 로그인 처리 x
-
-
-  //   //
+    loginLogic();
      
-  // }, []);
+  }, []);
+
+  const loginLogic = async () => {
+    console.log("loginLogic 호출");
+     // 1. 로컬 스토리지에 있는 access_token을 가져와서 해당 access_token이 유효한지 확인한다.
+    // 2. 유효하지 않다면 refresh_token을 통해 access_token을 발급해준다. 만약 refresh_token도 유효하지 않다면 로그아웃 상태로 유지해준다.
+
+    // access_token 또는 refresh_token 이 없다면 당연히 로그아웃 상태
+    const access_token = localStorage.getItem("access_token");
+    const refresh_token = localStorage.getItem("refresh_token");
+    if(!access_token || !refresh_token){
+      return;       
+    }
+
+    // access_token이 유효한지 확인. 
+    // 유효하면 로그인 처리, 유효하지 않다면 refresh_token을 통해 재발급
+    
+    try {
+      const url_userCheck = `${process.env.NEXT_PUBLIC_BASE_URL_1}/user/check`;
+      const loginRes : any = await h_postJson_by_token(url_userCheck);
+      console.log(`loginRes`, loginRes);
+
+      dispatch({
+        type : "LOG_IN",
+        payload : {
+          access_token: localStorage.getItem("access_token"),
+          refresh_token : localStorage.getItem("refresh_token"),
+          is_current_login : true,
+          user_id : loginRes.user_id,
+          user_name : loginRes.user_name
+        }
+      });      
+      
+    } catch (error) {
+      console.log(`usercheck 오류`, error);
+      handleUserCheckError();
+    }
+  }
+
+  async function handleUserCheckError() {
+    try {
+      // refresh 토큰이 유효한지 확인한 후, 유효하다면 access token을 받는다.
+      const url_userRefreshCheck = `${process.env.NEXT_PUBLIC_BASE_URL_1}/user/refreshToken`;
+      const loginRefreshRes: any = await h_postJson(url_userRefreshCheck, {refToken : localStorage.getItem("refresh_token")});
+      localStorage.setItem("access_token", loginRefreshRes.accessToken);
+      console.log(`loginRefreshRes`, loginRefreshRes);
+
+      // 유저 정보를 받기 위해 또 api 요청을 보내준다.
+      const url_userCheck = `${process.env.NEXT_PUBLIC_BASE_URL_1}/user/check`;
+      const loginRes : any = await h_postJson_by_token(url_userCheck);
+
+      dispatch({
+        type : "LOG_IN",
+        payload : {
+          access_token: loginRefreshRes.accessToken,
+          refresh_token : localStorage.getItem("refresh_token"),
+          is_current_login : true,
+          user_id : loginRes.user_id,
+          user_name : loginRes.user_name
+        }
+      });      
+
+    } catch (error) {
+
+      console.log(`refresh token을 통한 access token 갱신 실패`);
+      dispatch({
+        type: "LOG_OUT",
+        payload: {
+          access_token: null,
+          refresh_token: null,
+          is_current_login: false,
+          user_id: null,
+          user_name: null,
+        },
+      });
+    }
+  }
 
   // useEffect(() => {
 
@@ -159,7 +225,7 @@ export default function Header() {
                 </>
               }
               
-              <button className="ml-2">고객센터</button>
+              <button className="ml-2">마이페이지</button>
             </div>
           </div>
         </div>

@@ -1,9 +1,12 @@
 "use client";
 
+
+
 import { h_get } from "@/js/fetch";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, } from "react";
 import {BoardItem} from "@/types/board_type_id"
+import {BoardImage} from "@/types/board_type_id"
 import GAME_NAME_LIST from "@/constants/game_list";
 import GAME_SERVER_NAME_LIST from "@/constants/game_server_list";
 import TrxMulti from "../heptagon/TrxMulti";
@@ -11,11 +14,36 @@ import ITEM_TYPE from "@/constants/item_type";
 import { TrxMultiRef } from "@/types/heptagon/trx_multi_ref";
 import {formatDateToNumber} from "@/js/date_function"
 import { h_patch_by_token, h_postJson_by_token } from "@/js/fetch_by_token";
+import { useRouter } from "next/navigation";
+
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Slider from "react-slick";
+
+
+import { useSelector, useDispatch } from "react-redux";
+import {RootState} from '@/redux/reducer';
+import Modal from "../universal/Modal";
+
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
 
 type ChildProps = {
   board_id: string;
 };
 
+type BoardProps = {
+  boardInfo : BoardItem | null
+}
 
 export default function BoardDetail(props: ChildProps) {
 
@@ -24,7 +52,21 @@ export default function BoardDetail(props: ChildProps) {
   const [buyCount, setBuyCount] = useState<number>(1);
   const [itemQuantityText, setItemQuantityText] = useState('');
 
+  const [modalIsOpen, setIsOpen] = useState(true);
+
   const trxMultiRef = useRef<TrxMultiRef>(null);
+
+  const dispatch = useDispatch();
+  const loginState : any = useSelector((state : RootState) => state.loginReducer);
+  const is_current_login = loginState.is_current_login;
+  
+
+  const [isLogin, setIsLogin] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [trxId, setTrxId] = useState("");
+
+  const router = useRouter();
   
 
   useEffect(() => {
@@ -38,8 +80,22 @@ export default function BoardDetail(props: ChildProps) {
     });
   }, []);
 
+  useEffect(() => {
+    if(is_current_login === true){
+      setIsLogin(true);
+    } else if(is_current_login === false) {
+      setIsLogin(false);
+    }   
+  }, [is_current_login]);
+
+
   const handleBuy = () => {
     console.log("handleBuy 호출");
+
+    if(isLogin!==true) {
+      alert("로그인을 먼저 진행해주세요!")
+      return;
+    } 
     
 
     if (trxMultiRef.current) {
@@ -97,13 +153,34 @@ export default function BoardDetail(props: ChildProps) {
     h_postJson_by_token(url, data)
     .then(res => {
       console.log("구매하기 버튼 누른 뒤 api..",res);
+      setTrxId(res.transaction_id);
+      openModal()
     })
+  }
+
+  function openModal() {
+    console.log(`모달 오픈`);
+    setIsModalOpen(true);
+  }
+
+
+  const handleCloseModal = () => {
+    console.log("handle 호출");
+    setIsModalOpen(false);
+    router.push(`/my/sell`);
+      
   }
 
   
   return (
     <>
-      <TrxMulti onCompleteTrx={onCompleteTrx} ref={trxMultiRef}/>
+      <TrxMulti onCompleteTrx={onCompleteTrx} ref={trxMultiRef} />
+
+      <Modal isOpen={isModalOpen} closeModal={handleCloseModal}>
+        <div className="w-full h-full font-bold flex items-center">
+          <div className="mx-10"><span className="text-xl">trx_id :</span> {trxId}</div>
+        </div>
+      </Modal>
 
       <div className="py-2 bg-indigo-400">
         <div className="h-container text-white text-lg">
@@ -164,9 +241,7 @@ export default function BoardDetail(props: ChildProps) {
               거래 수량
             </div>
             <div className="pl-5 py-4 w-10/12">
-              <div className="mb-5 text-sm">
-                {itemQuantityText}                
-              </div>
+              <div className="mb-5 text-sm">{itemQuantityText}</div>
               <div className="flex items-center">
                 <input
                   type="number"
@@ -206,7 +281,10 @@ export default function BoardDetail(props: ChildProps) {
               </Link>
             </>
           ) : (
-            <button className="px-10 py-6 text-bold text-white text-lg bg-indigo-500" onClick={handleBuy}>
+            <button
+              className="px-10 py-6 text-bold text-white text-lg bg-indigo-500"
+              onClick={handleBuy}
+            >
               구매하기
             </button>
           )}
@@ -214,34 +292,75 @@ export default function BoardDetail(props: ChildProps) {
 
         <div className="mt-10">
           <div className="text-2xl pb-2 border-b-2 border-indigo-500">
-            상세 정보
+            상세 설명 및 이미지
           </div>
           <div className="mt-5">{boardInfo?.transaction_board_detail}</div>
 
-          <div className="mt-10">
-            {boardInfo?.transaction_detail_image.length === 0 ? "" : (
-              
-              boardInfo?.transaction_detail_image.map((item:any) => {
-                return (
-                  <img key={item.transaction_detail_image_id} src={item.transaction_detail_image}></img>
-                )
-              })
-            ) 
-            }
-          </div>
+          {boardInfo?.transaction_detail_image.length !== 0 && (
+            <div className="mt-20">
+              <SimpleSlider boardInfo={boardInfo} />
+            </div>
+          )}
         </div>
 
         <div className="mt-40">
-          <div className="text-2xl pb-2 border-b-2 border-indigo-500">
-            판매자 정보
+          <div className="mt-7 text-2xl">판매자 정보</div>
+          <div className="border-t-2 border-b border-indigo-500 text-lg">
+          <div className="w-full flex items-center border-b">
+            <div className="pl-5 py-4 w-2/12 bg-sky-50">계정명</div>
+            <div className="pl-5 py-4 w-10/12">
+              {boardInfo?.user_id.user_name}
+            </div>
           </div>
-          <div className="mt-5">{boardInfo?.transaction_board_detail}</div>
+
+          <div className="w-full flex items-center border-b">
+            <div className="pl-5 py-4 w-2/12 bg-sky-50">캐릭터명</div>
+            <div className="pl-5 py-4 w-10/12">
+              {boardInfo?.transaction_board_character_name}
+            </div>
+          </div>
+
+        </div>
         </div>
       </div>
-
     </>
   );
 }
+
+
+function SimpleSlider({boardInfo} : BoardProps) {
+  var settings = {
+    customPaging: function(i : number) {
+      
+      const board_img : BoardImage| undefined = boardInfo?.transaction_detail_image[i];
+      return (
+        <a className="">
+          <img className="" key={board_img?.transaction_detail_image_id} src={board_img?.transaction_detail_image}></img>
+        </a>
+      );
+    },
+    dots: true,
+    dotsClass: "slick-dots slick-thumb h-slick",
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+  return (
+    <div className="slider-container">
+      <Slider {...settings}>
+        {boardInfo?.transaction_detail_image.map((img: BoardImage) => {
+          return (
+            <div key={img.transaction_detail_image_id} className="w-32">
+              <img className="mx-auto" src={img.transaction_detail_image}></img>
+            </div>
+          );
+        })}
+      </Slider>
+    </div>
+  );  
+}
+
 
 const getItemQuantityText = (itemType : number) => {
   console.log("getItemQuantityText 호출")

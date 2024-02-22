@@ -47,7 +47,7 @@ export default function BoardList() {
   const [currentPage, setCurrentPage] = useState<number>(1); //  현재 페이지 
 
   const [boardType, setBoardType] = useState(0); // 리스트 (0 : 팝니다, 1 : 삽니다)
-  const [itemType, setItemType] = useState(0); // 물품 유형 (0 : 전체, 1 : 게임머니, 2 : 아이템, 3 : 계정, 4 : 기타)
+  const [itemType, setItemType] = useState(4); // 물품 유형 (0 : 전체, 1 : 게임머니, 2 : 아이템, 3 : 계정, 4 : 기타)
   const [transaction_board, setTransaction_board] = useState<number>(1);
   const [transaction_board_server, setTransaction_board_server] = useState<number>(1);
 
@@ -63,7 +63,7 @@ export default function BoardList() {
     )}&game_server_id=${Number(
       params.get("transaction_board_server") ?? 1
     )}&transaction_board_type=${boardType}${
-      itemType === 0 ? "" : `&transaction_board_item_type=${itemType}`
+      itemType === 4 ? "" : `&transaction_board_item_type=${itemType}`
     }&limit=${limit}&filter=0&page=${currentPage}`;
     console.log("생성된 url ababa", url + queryUrl);
 
@@ -151,11 +151,19 @@ function BoardSearchFilter({boardType, onChangeBoardType, itemType, onChangeItem
             <div className="ml-10 flex">
               <button
                 className={`flex items-center p-2 rounded-full ${
+                  itemType === 4 ? "bg-indigo-400 text-white" : ""
+                }`}
+                onClick={() => onChangeItemType(4)}
+              >
+                <div className="mr-2">전체</div> <FaCheck />
+              </button>
+              <button
+                className={`ml-5 flex items-center p-2 rounded-full ${
                   itemType === 0 ? "bg-indigo-400 text-white" : ""
                 }`}
                 onClick={() => onChangeItemType(0)}
               >
-                <div className="mr-2">전체</div> <FaCheck />
+                <div className="mr-2">게임머니</div> <FaCheck />
               </button>
               <button
                 className={`ml-5 flex items-center p-2 rounded-full ${
@@ -163,7 +171,7 @@ function BoardSearchFilter({boardType, onChangeBoardType, itemType, onChangeItem
                 }`}
                 onClick={() => onChangeItemType(1)}
               >
-                <div className="mr-2">게임머니</div> <FaCheck />
+                <div className="mr-2">아이템</div> <FaCheck />
               </button>
               <button
                 className={`ml-5 flex items-center p-2 rounded-full ${
@@ -171,21 +179,13 @@ function BoardSearchFilter({boardType, onChangeBoardType, itemType, onChangeItem
                 }`}
                 onClick={() => onChangeItemType(2)}
               >
-                <div className="mr-2">아이템</div> <FaCheck />
+                <div className="mr-2">계정</div> <FaCheck />
               </button>
               <button
                 className={`ml-5 flex items-center p-2 rounded-full ${
                   itemType === 3 ? "bg-indigo-400 text-white" : ""
                 }`}
                 onClick={() => onChangeItemType(3)}
-              >
-                <div className="mr-2">계정</div> <FaCheck />
-              </button>
-              <button
-                className={`ml-5 flex items-center p-2 rounded-full ${
-                  itemType === 4 ? "bg-indigo-400 text-white" : ""
-                }`}
-                onClick={() => onChangeItemType(4)}
               >
                 <div className="mr-2">기타</div> <FaCheck />
               </button>
@@ -268,8 +268,7 @@ function BoardListContent({ boardInfo, currentPage, setCurrentPage }: BoardItemP
           <div className="w-1/12 text-center">등급</div>
           <div className="w-5/12 text-center">물품 제목</div>
           <div className="w-2/12 text-center">판매 수량 / 분류</div>
-          <div className="w-1/12 text-center">단위 가격 (HEP)</div>
-          <div className="w-1/12 text-center">거래 가격 (HEP)</div>
+          <div className="w-2/12 text-center">단위 가격 (HEP)</div>
           <div className="w-1/12 text-center">등록일</div>
         </div>
         {boardInfo?.boardList?.map((item: BoardItem) => {
@@ -290,10 +289,7 @@ function BoardListContent({ boardInfo, currentPage, setCurrentPage }: BoardItemP
                 <div className="w-2/12 text-center">
                   {item.transaction_board_amount}
                 </div>
-                <div className="w-1/12 text-center">{item.transaction_board_item_price}</div>
-                <div className="w-1/12 text-center">
-                  {item.transaction_board_item_price}
-                </div>
+                <div className="w-2/12 text-center">{item.transaction_board_item_price}</div>
                 <div className="w-1/12 text-center">{month + "/" + day}</div>
               </div>
             </Link>

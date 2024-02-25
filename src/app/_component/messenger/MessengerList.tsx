@@ -386,13 +386,20 @@ function ChatListItem({chatList, setChatPage, setSelectChat}: ChatListItemProps)
 
     const handleMultiImage = (e: React.ChangeEvent<HTMLInputElement>) => {
       console.log("! handleImage 호출", e.target.files);
-      
 
+      
       if (e.target.files) {
         const files = Array.from(e.target.files);
 
+         // 최대 9개의 파일만 유지
+        const filesToUpload = files.slice(0, 9);
+        if(e.target.files?.length > 9) {
+          alert("한번에 최대 9장만 업로드 됩니다.");        
+        }
+
+
         Promise.all(
-          files.map((file) => {
+          filesToUpload.map((file) => {
             const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/chat/chat_image`;
             const formData = new FormData();
             formData.append("file", file);
@@ -625,14 +632,35 @@ function ChatListItem({chatList, setChatPage, setSelectChat}: ChatListItemProps)
 
 
     const [gridLayout, setGridLayout] = useState<string[][]>([]);
+    const [imgNum, setImgNum] = useState(0);
 
   useEffect(() => {
     // 이미지를 그리드 레이아웃에 배치
     const imageUrls = JSON.parse(item.chat_content);
     const numImages = imageUrls.length;
-    const numColumns = Math.min(numImages, 3); // 최대 3개 열로 제한
+    setImgNum(numImages);
 
-    const numRows = Math.ceil(numImages / numColumns);
+    let numRows = 0;
+    let numColumns = 0;
+
+    if (numImages === 1 || numImages === 2 || numImages === 3) {
+      numRows = 1;
+      numColumns = numImages;
+    } else if (numImages === 4) {
+      numRows = 2;
+      numColumns = 2;
+    } else if (numImages === 5 || numImages === 6) {
+      numRows = 2;
+      numColumns = 3;
+    } else if (numImages === 7 || numImages === 8) {
+      numRows = 3;
+      numColumns = 3;
+    } else if (numImages >= 9) {
+      numRows = 3;
+      numColumns = 3;
+    }
+
+
     const gridLayoutArray = [];
 
     let imageIndex = 0;
@@ -665,21 +693,22 @@ function ChatListItem({chatList, setChatPage, setSelectChat}: ChatListItemProps)
       //   }`}
       //   onLoad={() => handleImgLoad(item)}
       //   ></img>
-      <div className="w-28 grid gap-4">
-        {gridLayout.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex">
-            {row.map((imageSrc, columnIndex) => (
+      <div className="grid">
+      {gridLayout.map((row, rowIndex) => (
+        <div key={rowIndex} className="w-28 flex">
+          {row.map((imageSrc, columnIndex) => (
+            <div key={columnIndex} className={`w-full flex ${imgNum > 3 ? "h-10" : "" }`}>
               <img
-                key={columnIndex}
                 src={imageSrc}
                 className="w-full"
                 alt={`Image ${rowIndex * 3 + columnIndex + 1}`}
                 onLoad={() => handleImgLoad(item)}
               />
-            ))}
-          </div>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
     );
     
   }

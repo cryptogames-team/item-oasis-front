@@ -43,7 +43,7 @@ export default function Main() {
         <div className="h-container flex flex-col">
           <div className="flex">
             <div className="w-4/6 pr-4">
-              <img src="/직거래방지.jpg" className=" rounded-lg">
+              <img src="/item_main.jpg" className=" rounded-lg">
               </img>
             </div>
 

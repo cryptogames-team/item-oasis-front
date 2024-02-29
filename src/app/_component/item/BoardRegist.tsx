@@ -370,8 +370,8 @@ export default function RegistComponent() {
       </div>
       <div className="mt-5 w-full flex flex-col items-center">
         <div className="h-container">
-          <div className="grid grid-cols-12 justify-items-center gap-5">
-            <div className="col-span-4 flex items-center place-self-start text-lg">
+          <div className="grid grid-cols-12 justify-items-center gap-5 gap-y-10">
+            {/* <div className="col-span-4 flex items-center place-self-start text-lg">
               어떤 물품을<br></br>등록하시겠어요?
             </div>
             <div className="col-span-8 place-self-stretch flex justify-between">
@@ -411,7 +411,7 @@ export default function RegistComponent() {
                   사고 싶어요
                 </div>
               </button>
-            </div>
+            </div> */}
 
             <div className="col-span-4 flex items-center place-self-stretch text-lg">
               게임명과 서버명을<br></br>입력해주세요.

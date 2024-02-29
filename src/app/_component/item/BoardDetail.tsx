@@ -328,11 +328,23 @@ export default function BoardDetail(props: ChildProps) {
 }
 
 
-function SimpleSlider({boardInfo} : BoardProps) {
+function SimpleSlider({ boardInfo }: BoardProps) {
+
+  if (boardInfo?.transaction_detail_image.length === 1) {
+    // 이미지가 한 개인 경우 Slider 컴포넌트 호출하지 않음
+    return (
+      <div className="w-full flex justify-center">
+        <div key={boardInfo.transaction_detail_image[0].transaction_detail_image_id} className=" w-96">
+          <img className="mx-auto" src={boardInfo.transaction_detail_image[0].transaction_detail_image} alt="Transaction Detail"></img>
+        </div>
+      </div>
+    );
+  }
+
   var settings = {
-    customPaging: function(i : number) {
-      
-      const board_img : BoardImage| undefined = boardInfo?.transaction_detail_image[i];
+    customPaging: function (i: number) {
+
+      const board_img: BoardImage | undefined = boardInfo?.transaction_detail_image[i];
       return (
         <a className="">
           <img className="" key={board_img?.transaction_detail_image_id} src={board_img?.transaction_detail_image}></img>
@@ -346,19 +358,28 @@ function SimpleSlider({boardInfo} : BoardProps) {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
+
+
   return (
     <div className="slider-container">
       <Slider {...settings}>
-        {boardInfo?.transaction_detail_image.map((img: BoardImage) => {
-          return (
-            <div key={img.transaction_detail_image_id} className="w-32">
-              <img className="mx-auto" src={img.transaction_detail_image}></img>
-            </div>
-          );
-        })}
+
+        {boardInfo?.transaction_detail_image.length === 1 ?
+          (<div key={boardInfo?.transaction_detail_image[0].transaction_detail_image_id} className="w-32">
+            <img className="mx-auto" src={boardInfo?.transaction_detail_image[0].transaction_detail_image}></img>
+          </div>)
+          : (boardInfo?.transaction_detail_image.map((img: BoardImage) => {
+            return (
+              <div key={img.transaction_detail_image_id} className="w-32">
+                <img className="mx-auto" src={img.transaction_detail_image}></img>
+              </div>
+            );
+          }))
+        }
+
       </Slider>
     </div>
-  );  
+  );
 }
 
 

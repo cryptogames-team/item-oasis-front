@@ -15,7 +15,7 @@ export default function Footer() {
                 alt="로고"
               ></Image> */}
               <button className="ml-3 justify-self-start text-xl">
-                푸터
+                
               </button>
             </Link>
           </div>

@@ -235,9 +235,9 @@ export default function Search() {
               판매 등록
             </button>
 
-            <button className="ml-3 py-3 px-5 rounded-xl bg-indigo-400" onClick={() =>handleIsLogin("/item/regist")}>
+            {/* <button className="ml-3 py-3 px-5 rounded-xl bg-indigo-400" onClick={() =>handleIsLogin("/item/regist")}>
               구매 등록
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -257,9 +257,9 @@ export default function Search() {
           <button className="ml-10 text-lg text-bold" onClick={() =>handleIsLogin("/my/sell")}>
             마이 페이지
           </button>
-          <Link href="/messenger" className="ml-10 text-lg text-bold">
+          {/* <Link href="/messenger" className="ml-10 text-lg text-bold">
             거래 채팅
-          </Link>
+          </Link> */}
         </div>
       </div>
     </>

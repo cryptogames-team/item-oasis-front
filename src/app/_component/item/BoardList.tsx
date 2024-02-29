@@ -14,12 +14,15 @@ import {BoardItem} from "@/types/board_type"
 import Talk from "../messenger/TalkBtn";
 
 type ChangeHandler = (type: number) => void;
+type ChangeHandler2 = (type: string) => void;
 
 type PropsFilter = {
   boardType: number;
   onChangeBoardType : ChangeHandler;
   itemType : number;
   onChangeItemType : ChangeHandler;
+  searchWord : string;
+  setSearchWord : ChangeHandler2;  
 };
 
 
@@ -51,6 +54,8 @@ export default function BoardList() {
   const [transaction_board, setTransaction_board] = useState<number>(1);
   const [transaction_board_server, setTransaction_board_server] = useState<number>(1);
 
+  const [searchWord, setSearchWord] = useState('');
+
   const params = useSearchParams();
 
   useEffect(() => {
@@ -64,7 +69,8 @@ export default function BoardList() {
       params.get("transaction_board_server") ?? 1
     )}&transaction_board_type=${boardType}${
       itemType === 4 ? "" : `&transaction_board_item_type=${itemType}`
-    }&limit=${limit}&filter=0&page=${currentPage}`;
+    }&limit=${limit}&filter=0&page=${currentPage}
+    &transaction_board_title=${searchWord}`;
     console.log("생성된 url ababa", url + queryUrl);
 
     h_get(url+queryUrl)
@@ -80,7 +86,7 @@ export default function BoardList() {
       setBoardInfo(mappedData);
     });  
   
-  }, [boardType, itemType, currentPage]);
+  }, [boardType, itemType, currentPage, searchWord]);
 
   const handleChangeBoardType = (board_type : number) => {
     console.log("handleChangeBoardType 호출");
@@ -93,6 +99,7 @@ export default function BoardList() {
     setItemType(item_type);
     setCurrentPage(1);
   }
+
   
 
   return (
@@ -110,6 +117,8 @@ export default function BoardList() {
         onChangeBoardType={handleChangeBoardType}
         itemType={itemType}
         onChangeItemType={handleChangeItemType}
+        searchWord={searchWord}
+        setSearchWord={setSearchWord}
       />
       <BoardListContent boardInfo={boardInfo} currentPage={currentPage} setCurrentPage={setCurrentPage} />
 
@@ -117,14 +126,27 @@ export default function BoardList() {
   );
 }
 
-function BoardSearchFilter({boardType, onChangeBoardType, itemType, onChangeItemType} : PropsFilter) {
+function BoardSearchFilter({boardType, onChangeBoardType, itemType, onChangeItemType, searchWord, setSearchWord} : PropsFilter) {
 
+  const [tempWord, setTempWord] = useState('');
+
+
+  const handleSearchWord = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("handleSearchWord 호출", event.target.value);
+    setTempWord(event.target.value);
+  
+  }
+
+  const handleSearch = () => {
+    console.log("handleSearch 호출");
+    setSearchWord(tempWord);  
+  }
 
   return (
     <>
       <div className="mt-10 h-container">
         <div className="border-t-2 border-b border-indigo-400 font-bold">
-          <div className="flex items-center border-b">
+          {/* <div className="flex items-center border-b">
             <div className="py-4 pl-5 w-2/12 bg-sky-50">리스트</div>
             <div className="ml-10 flex">
               <button
@@ -144,7 +166,7 @@ function BoardSearchFilter({boardType, onChangeBoardType, itemType, onChangeItem
                 <div className="mr-2">삽니다</div> <FaCheck />
               </button>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex items-center border-b">
             <div className="py-4 pl-5 w-2/12 bg-sky-50">물품유형</div>
@@ -195,8 +217,8 @@ function BoardSearchFilter({boardType, onChangeBoardType, itemType, onChangeItem
           <div className="flex items-center border-b">
             <div className="py-4 pl-5 w-2/12 bg-sky-50">물품명</div>
             <div className="ml-10 flex items-center">
-              <input type="text" className="focus:outline-1 border p-2"></input>
-              <button className="ml-5 border-2 px-3 py-2 flex">
+              <input type="text" className="focus:outline-1 border p-2" onChange={(e) => handleSearchWord(e)} value={tempWord}></input>
+              <button className="ml-5 border-2 px-3 py-2 flex" onClick={handleSearch}>
                 <IoIosSearch className="text-indigo-400 mr-1" size={23} />
                 <div>검색</div>
               </button>

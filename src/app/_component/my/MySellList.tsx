@@ -817,7 +817,7 @@ function BoardContent_Ing({boardIngList, sellBuyType}:BoardIngProp) {
   }
 
   const handleConfirmSell = (trx_id : number) => {
-    console.log("handleConfirmSell 호출");
+    console.log("handleConfirmSell 호출", trx_id);
 
     const url = `${process.env.NEXT_PUBLIC_BASE_URL_1}/transaction/sell/${trx_id}`;
     h_patch_by_token(url)

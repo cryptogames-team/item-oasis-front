@@ -6,12 +6,14 @@ import { useEffect, useRef, useState } from "react";
 import { h_get_by_token, h_postJsonText_by_token, h_postJson_by_token } from "@/js/fetch_by_token";
 import { useSelector, useDispatch } from "react-redux";
 import {RootState} from '@/redux/reducer';
+import { useRouter } from "next/navigation";
 
 export default function Header() {
 
   const dispatch = useDispatch();
   const loginState : any = useSelector((state : RootState) => state.loginReducer);
   const is_current_login = loginState.is_current_login;
+  const router = useRouter();
   
 
   const [isLogin, setIsLogin] = useState(false);
@@ -178,6 +180,16 @@ export default function Header() {
     }
   }
 
+  const handleIsLogin = (path : string) => {
+    console.log("handleIsLogin 호출");
+
+    if(isLogin === true) {
+      router.push(`${path}`)
+    } else {
+      alert("로그인을 먼저 진행해주세요!")
+    }  
+  }
+
   // useEffect(() => {
 
   //   // 로그인 처리
@@ -225,7 +237,7 @@ export default function Header() {
                 </>
               }
               
-              <button className="ml-2">마이페이지</button>
+              <button className="ml-2" onClick={() =>handleIsLogin("/my/sell")}>마이페이지</button>
             </div>
           </div>
         </div>

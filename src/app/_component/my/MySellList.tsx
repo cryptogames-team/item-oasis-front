@@ -15,6 +15,8 @@ import { FaRegHandshake } from "react-icons/fa";
 import { GrDocumentVerified } from "react-icons/gr";
 import { LuPackageOpen } from "react-icons/lu";
 
+import Modal from "../universal/Modal";
+
 
 
 const SellBuyType = {
@@ -95,6 +97,12 @@ type BoardRegistProp = {
 
 type BoardIngProp = {
   sellBuyType : number;
+  boardIngList : BoardIngItem[];
+}
+
+type BoardIngProp2 = {
+  sellBuyType : number;
+  setSellBuyType : (sellBuyType : number) => void;
   boardIngList : BoardIngItem[];
 }
 
@@ -246,7 +254,7 @@ export default function MySellList() {
 
       case SellBuyType.Sell_Continue:
       case SellBuyType.Buy_Continue:
-        return <BoardContent_Ing sellBuyType={sellBuyType} boardIngList={boardIngList}/>;
+        return <BoardContent_Ing sellBuyType={sellBuyType} setSellBuyType={setSellBuyType} boardIngList={boardIngList}/>;
 
       case SellBuyType.Sell_Complete:
       case SellBuyType.Buy_Complete:      
@@ -787,9 +795,12 @@ function BoardContent_regist({
               </div>
               <div className="w-1/12 text-center">{month + "/" + day}</div>
               <div className="w-1/12 text-center">
+              <Link href={`/item/board/boardDetail/${item.transaction_board_id}`}>
                 <button className="border shadow-sm border-gray-400 p-1 px-2">
                   수정
                 </button>
+              </Link>
+                
               </div>
             </div>
           );
@@ -799,7 +810,10 @@ function BoardContent_regist({
   );
 }
 
-function BoardContent_Ing({boardIngList, sellBuyType}:BoardIngProp) {
+function BoardContent_Ing({boardIngList, sellBuyType, setSellBuyType}:BoardIngProp2) {
+
+  const [trxId, setTrxId] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getItemTypeString = (item_type : number) => {
     switch (item_type) {
@@ -823,7 +837,9 @@ function BoardContent_Ing({boardIngList, sellBuyType}:BoardIngProp) {
     h_patch_by_token(url)
     .then(res => {
       console.log(`판매 확정 로그`, res);
-      alert("판매 확정되었습니다!");
+      setTrxId(res.transaction_id)
+      setIsModalOpen(true);
+      setSellBuyType(SellBuyType.Sell_Continue);
     })
     .catch(res => {
       console.log(`판매 확정 로그`, res);
@@ -838,7 +854,10 @@ function BoardContent_Ing({boardIngList, sellBuyType}:BoardIngProp) {
     h_patch_by_token(url)
     .then(res => {
       console.log(`구매확정 로그`, res);
-      alert("구매확정되었습니다!");
+      setSellBuyType(SellBuyType.Buy_Complete);
+      setTrxId(res.transaction_id)
+      setIsModalOpen(false);
+      
     })
     .catch(res => {
       console.log(`구매확정 로그`, res);
@@ -846,9 +865,16 @@ function BoardContent_Ing({boardIngList, sellBuyType}:BoardIngProp) {
     })  
   }
 
+  const handleCloseModal = () => {
+    console.log("handleCloseModal 호출");
+    setIsModalOpen(false);
+  }
+
 
   return (
     <>
+    <Modal isOpen={isModalOpen} closeModal={handleCloseModal} trxId={trxId}>
+    </Modal>
     <div>
       <div>
           <div className="flex items-center border-y-2 py-2 bg-gray-50 mt-8 text-sm font-bold text-gray-500 gap-4">
@@ -857,7 +883,7 @@ function BoardContent_Ing({boardIngList, sellBuyType}:BoardIngProp) {
             <div className="w-6/12 text-center">물품제목</div>
             <div className="w-1/12 text-center">가격</div>
             <div className="w-2/12 text-center">거래진행</div>
-            <div className="w-1/12 text-center">취소, 신고</div>
+            <div className="w-1/12 text-center">취소</div>
           </div>
           {boardIngList.map((item: BoardIngItem) => {
             
@@ -903,7 +929,7 @@ function BoardContent_Ing({boardIngList, sellBuyType}:BoardIngProp) {
 
                     <div className="w-1/12 text-center">{result_price}</div>
                     <div className="w-2/12 flex justify-center">
-                      {sellBuyType === SellBuyType.Sell_Continue ? (
+                      {sellBuyType === SellBuyType.Sell_Continue && item.sell_confirmation != 1 ? (
                         <button
                           className=" text-white bg-lime-400 px-3 py-1 rounded-md shadow-sm"
                           onClick={() => handleConfirmSell(item.transaction_id)}
@@ -923,9 +949,9 @@ function BoardContent_Ing({boardIngList, sellBuyType}:BoardIngProp) {
 
                     <div className="w-1/12 text-center flex flex-col">
                       <button className="border shadow-sm">취소</button>
-                      <button className="border mt-1 borde shadow-sm">
+                      {/* <button className="border mt-1 borde shadow-sm">
                         신고
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                   <div className="mt-2 py-2 w-full flex items-center gap-4">

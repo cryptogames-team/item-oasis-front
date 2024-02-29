@@ -3,7 +3,10 @@ import { h_get } from "@/js/fetch";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import {BoardItem} from "@/types/board_type"
-
+import { useSelector, useDispatch } from "react-redux";
+import {RootState} from '@/redux/reducer';
+import { CiSettings } from "react-icons/ci";
+import Link from "next/link";
 
 const TradeType = {
   Trading: 1,
@@ -16,6 +19,47 @@ type BoardItemInfo = {
 }
 
 export default function Main() {
+
+  const dispatch = useDispatch();
+  const loginState : any = useSelector((state : RootState) => state.loginReducer);
+  const is_current_login = loginState.is_current_login;
+  const user_name = loginState.user_name;
+  const [isLogin, setIsLogin] = useState(false);
+  const [userName, setUserName] = useState(user_name);
+
+  const [sellCount, setSellCount] = useState<number>(0);
+  const [buyCount, setBuyCount] = useState<number>(0);
+
+  useEffect(() => {
+    if(is_current_login === true){
+      setIsLogin(true);
+    } else if(is_current_login === false) {
+      setIsLogin(false);
+    }   
+  }, [is_current_login]);
+
+  useEffect(() => {
+    setUserName(user_name);
+
+    console.log(`user_name`, user_name);  
+    
+    if(is_current_login === true && user_name !== null) {
+      const url_seller = `${process.env.NEXT_PUBLIC_BASE_URL_1}/transaction/seller/${user_name}`;
+      h_get(url_seller).then((res) => {
+        console.log("seller 응답 : ", res);
+        setSellCount(res.length);
+      });
+
+      const url_buyer = `${process.env.NEXT_PUBLIC_BASE_URL_1}/transaction/buyer/${user_name}`;
+      h_get(url_buyer).then((res) => {
+        console.log("buyer 응답 : ", res);
+        setBuyCount(res.length);
+      });
+
+    }
+  }, [user_name]);
+
+  
 
   const [boardInfo, setBoardInfo] = useState<BoardItemInfo | undefined>();
   
@@ -47,11 +91,34 @@ export default function Main() {
               </img>
             </div>
 
-            <div className="w-2/6 flex flex-col">
+            <div className="ml-5 w-2/6 flex flex-col">
               <div className="flex flex-col items-center basic_shadow1 basic_shadow2 p-4 rounded-md">
-                <div className="text-xl font-bold">블록체인 기반 아이템 안전거래 플랫폼</div>
-                <div className="mt-2 text-xl font-bold">아이템 오아시스</div>
-                <button className="mt-10 bg-indigo-400 text-white p-4 rounded-lg font-bold">아이템 오아시스 로그인</button>
+                {
+                  is_current_login === true ? 
+                  (<div className="mt-3 flex flex-col">
+                    <div className="self-end"><Link href="/my/sell"><button><CiSettings size={25} /></button></Link></div>                    
+                    <div className="text-xl font-bold">{userName} 님, </div>
+                    <div className="mt-2 text-xl">오늘은 어떤 게임을 찾으세요? </div>
+                    <div className=" px-2 pb-4 pt-6 flex justify-between">
+                      <div className="flex flex-col items-center">
+                        <div>{sellCount}</div>
+                        <div>판매진행 중</div>
+                      </div>
+                      <div className="border-r border-slate-400"></div>
+                      <div className="flex flex-col items-center">
+                        <div>{buyCount}</div>
+                        <div>구매진행 중</div>
+                      </div>
+
+                    </div>
+                  </div>) 
+                  :(<>
+                    <div className="text-xl font-bold">블록체인 기반 아이템 안전거래 플랫폼</div>
+                    <div className="mt-2 text-xl font-bold">아이템 오아시스</div>
+                    <button className="mt-10 bg-indigo-400 text-white p-4 rounded-lg font-bold">아이템 오아시스 로그인</button>
+                  </>)
+                }
+                
               </div>
             </div>
             

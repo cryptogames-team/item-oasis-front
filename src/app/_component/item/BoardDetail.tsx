@@ -20,6 +20,10 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
+import {
+  AiOutlineCheckCircle,
+} from "react-icons/ai";
+
 
 import { useSelector, useDispatch } from "react-redux";
 import {RootState} from '@/redux/reducer';
@@ -64,7 +68,7 @@ export default function BoardDetail(props: ChildProps) {
   const [isLogin, setIsLogin] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [trxId, setTrxId] = useState("");
+  const [trxId, setTrxId] = useState<string>("");
 
   const router = useRouter();
   
@@ -168,18 +172,13 @@ export default function BoardDetail(props: ChildProps) {
     console.log("handle 호출");
     setIsModalOpen(false);
     router.push(`/my/sell`);
-      
   }
 
   
   return (
     <>
       <TrxMulti onCompleteTrx={onCompleteTrx} ref={trxMultiRef} />
-
-      <Modal isOpen={isModalOpen} closeModal={handleCloseModal}>
-        <div className="w-full h-full font-bold flex items-center">
-          <div className="mx-10"><span className="text-xl">trx_id :</span> {trxId}</div>
-        </div>
+      <Modal isOpen={isModalOpen} closeModal={handleCloseModal} trxId={trxId}>
       </Modal>
 
       <div className="py-2 bg-indigo-400">

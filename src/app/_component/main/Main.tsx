@@ -124,6 +124,37 @@ export default function Main() {
             
           </div>
 
+          <div className="mt-20">
+            <div className="font-bold text-2xl">최근 거래글</div>
+            
+            <div className="mt-7 basic_shadow1 basic_shadow2 rounded-lg w-full p-5">
+              <div className="text-xl underline underline-offset-8">실시간 최저가 물품이에요!</div>
+                <div className="mt-5 flex flex-col items-center">              
+                  {
+                      boardInfo?.boardList.map(item => {
+                        return (
+                          <div key={item.transaction_board_id} className="mt-4 w-full flex items-center">
+                            <div className="border-2 px-7 py-2 text-lg rounded-md text-bold recent_color">
+                              {
+                                item.transaction_board_item_type === 0 ? "게임머니" :
+                                item.transaction_board_item_type === 1 ? "아이템" :
+                                item.transaction_board_item_type === 2 ? "계정" :
+                                item.transaction_board_item_type === 3 ? "기타" : "타입오류"
+                              }
+                            </div>
+                            <div className="pl-10 flex-1">{item.transaction_board_title}</div>
+                            <div className="flex flex-col items-end">
+                              <div className="text-sm">{`${item.game_id.game_name} > ${item.game_server_id.game_server_name}`}</div>
+                              <div className="mt-1 text-indigo-400 text-bold">거래가격 {item.transaction_board_item_price} HEP</div>
+                            </div>
+                          </div>
+                        )
+                      })
+                    }
+                </div>
+            </div>
+        </div>
+
           <div className="mt-20 flex flex-col">
             <div className="font-bold text-2xl">거래가이드</div>
             <div className="mt-7 flex">
@@ -155,37 +186,7 @@ export default function Main() {
             </div>
           </div>
 
-          <div className="mt-20">
-            <div className="font-bold text-2xl">최근 거래글</div>
-            
-            <div className="mt-7 basic_shadow1 basic_shadow2 rounded-lg w-full p-5">
-              <div className="text-xl underline underline-offset-8">실시간 최저가 물품이에요!</div>
-                <div className="mt-5 flex flex-col items-center">              
-                  {
-                      boardInfo?.boardList.map(item => {
-                        return (
-                          <div key={item.transaction_board_id} className="mt-4 w-full flex items-center">
-                            <div className="border-2 px-7 py-2 text-lg rounded-md text-bold recent_color">
-                              {
-                                item.transaction_board_item_type === 0 ? "게임머니" :
-                                item.transaction_board_item_type === 1 ? "아이템" :
-                                item.transaction_board_item_type === 2 ? "계정" :
-                                item.transaction_board_item_type === 3 ? "기타" : "타입오류"
-                              }
-                            </div>
-                            <div className="pl-10 flex-1">{item.transaction_board_title}</div>
-                            <div className="flex flex-col items-end">
-                              <div className="text-sm">{`${item.game_id.game_name} > ${item.game_server_id.game_server_name}`}</div>
-                              <div className="mt-1 text-indigo-400 text-bold">거래가격 {item.transaction_board_item_price} HEP</div>
-                            </div>
-                          </div>
-                        )
-                      })
-                    }
-                </div>
-            </div>
 
-        </div>
       </div>
       </div>
     </>

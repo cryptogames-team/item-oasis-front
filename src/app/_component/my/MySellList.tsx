@@ -873,7 +873,7 @@ function BoardContent_Ing({boardIngList, sellBuyType, setSellBuyType}:BoardIngPr
 
   return (
     <>
-    <Modal isOpen={isModalOpen} closeModal={handleCloseModal} trxId={trxId}>
+    <Modal isOpen={isModalOpen} closeModal={handleCloseModal} trxId={"ac4baa961ed8ba5bd5443b1196650a36f673f3282128378f07db504b9ef210fe"}>
     </Modal>
     <div>
       <div>

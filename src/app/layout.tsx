@@ -5,7 +5,7 @@ import Header from "./_component/universal/Header";
 import Footer from "./_component/universal/Footer";
 import Talk from "@/app/_component/messenger/TalkBtn";
 import {ProviderRedux} from "@/redux/redux-provider";
-
+import Head from "next/head";
 
 
 
@@ -14,6 +14,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Item Oasis',
   description: '블록체인 기반 게임 아이템 거래 플랫폼',
+  icons: {
+    icon: "/아이템오아시스로고.png",
+  },
 }
 
 export default function RootLayout({
@@ -22,8 +25,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html>
-      
+    <html>      
       <body className={inter.className}>
         <ProviderRedux>
           <Header />          

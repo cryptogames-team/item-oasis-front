@@ -249,11 +249,11 @@ export default function Search() {
             <CgMenuRound size={30} />
             <div className="ml-2">추천 게임</div>
           </Link>
-          <Link 
+          {/* <Link 
             href="/item/board/?transaction_board_game=1&transaction_board_server=1"
             className="ml-10 text-lg text-bold">
             테스트
-          </Link>
+          </Link> */}
           <button className="ml-10 text-lg text-bold" onClick={() =>handleIsLogin("/my/sell")}>
             마이 페이지
           </button>

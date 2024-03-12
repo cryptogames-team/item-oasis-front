@@ -17,11 +17,34 @@ export default function Talk() {
   const dispatch = useDispatch();
   const socketState : any = useSelector((state : RootState) => state.socketReducer);
   const notice = socketState.notice;
+  const loginState : any = useSelector((state : RootState) => state.loginReducer);
+  const is_current_login = loginState.is_current_login;
+
   const pathName = usePathname();
 
   const [noticeRead, setNoticeRead] = useState(true);
 
   const [active, setActive] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+
+  const handleClickChat = () => {
+    console.log("handleClickChat 호출");
+    if(is_current_login) {
+      setActive(true); setNoticeRead(true);
+    } else {
+      alert("로그인 후 이용하실 수 있습니다.")
+    }
+    
+  
+  }
+
+  useEffect(() => {
+    if(is_current_login === true){
+      setIsLogin(true);
+    } else if(is_current_login === false) {
+      setIsLogin(false);
+    }   
+  }, [is_current_login]);
   
 
 
@@ -109,7 +132,7 @@ export default function Talk() {
       {active === false ? (
         <button
           className="shadow-md fixed rounded-full bg-indigo-400 bottom-10 right-[10px] h-20 w-20 text-white"
-          onClick={() => {setActive(true); setNoticeRead(true);}}
+          onClick={handleClickChat}
         >
           <div className="flex flex-col items-center justify-center relative">
             {noticeRead === false && (

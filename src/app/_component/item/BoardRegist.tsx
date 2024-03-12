@@ -370,7 +370,7 @@ export default function RegistComponent() {
       </div>
       <div className="mt-5 w-full flex flex-col items-center">
         <div className="h-container">
-          <div className="grid grid-cols-12 justify-items-center gap-5 gap-y-10">
+          <div className="grid grid-cols-12 justify-items-center gap-5 gap-y-7">
             {/* <div className="col-span-4 flex items-center place-self-start text-lg">
               어떤 물품을<br></br>등록하시겠어요?
             </div>

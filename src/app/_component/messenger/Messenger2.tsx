@@ -333,7 +333,7 @@ export default function MessengerComponent() {
                       selectChat?.item_count
                     } (단위) | ${
                       selectChat?.price
-                    } | ${"캐릭터명 : test1"}`}</div>
+                    } | ${"캐릭터명 : nova"}`}</div>
                   </div>
                   <div className="text-xs">
                     <button className="border border-red-400 text-red-500 py-1 px-2 bg-white">

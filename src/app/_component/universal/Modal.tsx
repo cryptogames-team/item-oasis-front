@@ -38,8 +38,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, closeModal, trxId }) => {
         <div className='mt-5 h-full'>
         <div className="w-full h-full font-bold flex flex-col items-center">
           <AiOutlineCheckCircle className="text-lime-500" size={80} />
-          <div className="mt-10 text-4xl">트랜잭션 성공</div>
-          <div className="mt-10">
+          <div className="mt-10 text-4xl">구매확정 성공</div>
+          <div className="mt-5 text-2xl">구매대금이 판매자에게 전송됩니다.</div>
+          <div className="mt-7 text-xl">
             트랜잭션 ID :{" "}
             <a
               className=" text-orange-500 font-bold"
